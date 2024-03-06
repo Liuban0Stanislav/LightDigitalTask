@@ -1,4 +1,4 @@
-package com._lightdigitaltask.service;
+package com._lightdigitaltask.service.Impl;
 
 import com._lightdigitaltask.repository.UserRepository;
 import com._lightdigitaltask.servlet.MethodInspector;

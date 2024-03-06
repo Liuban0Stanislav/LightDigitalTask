@@ -1,0 +1,399 @@
+{
+	"info": {
+		"_postman_id": "9637437b-a621-42e5-b326-49706b7b69be",
+		"name": "LightDigital",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32935352"
+	},
+	"item": [
+		{
+			"name": "Операции с пользователями",
+			"item": [
+				{
+					"name": "Просмотреть список пользователей",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение пользователя по  его ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Операции с аватаром",
+			"item": [
+				{
+					"name": "Получить аватар пользователя по его ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/photo/avatar/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"photo",
+								"avatar",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить аватар.",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/D:/Java Study/Projects/LightDigitalTask/LightDigitalTask/src/main/resources/photos/1.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/photo/avatar/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"photo",
+								"avatar",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Операции с заявками",
+			"item": [
+				{
+					"name": "Посмотреть все заявки с сортировкой по возрастанию",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/application",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"application"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Посмотреть все заявки сортированные по УБЫВАНИЮ и в зависимости от их статуса",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>ID</th>\r",
+									"        <th>Status</th>\r",
+									"        <th>Text</th>\r",
+									"        <th>Date</th>\r",
+									"        <th>Phone</th>\r",
+									"        <th>User Name</th>\r",
+									"        <th>User ID</th>\r",
+									"        <th>First Name</th>\r",
+									"        <th>Last Name</th>\r",
+									"        <th>User Role</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.content}}\r",
+									"        <tr>\r",
+									"            <td>{{id}}</td>\r",
+									"            <td>{{status}}</td>\r",
+									"            <td>{{text}}</td>\r",
+									"            <td>{{date}}</td>\r",
+									"            <td>{{phone}}</td>\r",
+									"            <td>{{userName}}</td>\r",
+									"            <td>{{users.id}}</td>\r",
+									"            <td>{{users.firstName}}</td>\r",
+									"            <td>{{users.lastName}}</td>\r",
+									"            <td>{{users.role}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return { response: pm.response.json() }\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/application/pagingBackOrder/DRAFT/0/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"application",
+								"pagingBackOrder",
+								"DRAFT",
+								"0",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Посмотреть все заявки сортированные по ВОЗРАСТАНИЮ и в зависимости от их статуса",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>ID</th>\r",
+									"        <th>Status</th>\r",
+									"        <th>Text</th>\r",
+									"        <th>Date</th>\r",
+									"        <th>Phone</th>\r",
+									"        <th>User Name</th>\r",
+									"        <th>User ID</th>\r",
+									"        <th>First Name</th>\r",
+									"        <th>Last Name</th>\r",
+									"        <th>User Role</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.content}}\r",
+									"        <tr>\r",
+									"            <td>{{id}}</td>\r",
+									"            <td>{{status}}</td>\r",
+									"            <td>{{text}}</td>\r",
+									"            <td>{{date}}</td>\r",
+									"            <td>{{phone}}</td>\r",
+									"            <td>{{userName}}</td>\r",
+									"            <td>{{users.id}}</td>\r",
+									"            <td>{{users.firstName}}</td>\r",
+									"            <td>{{users.lastName}}</td>\r",
+									"            <td>{{users.role}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return { response: pm.response.json() }\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/application/pagingIncreaseOrder/DRAFT/0/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"application",
+								"pagingIncreaseOrder",
+								"DRAFT",
+								"0",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Регистрация",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"Kisye\",\r\n  \"password\": \"211708Zx\",\r\n  \"firstName\": \"Anna\",\r\n  \"lastName\": \"Liuban\",\r\n  \"phone\": \"+7(924)435-98-84\",\r\n  \"role\": \"ADMIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Авторизация",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"Jonnie25\",\r\n  \"password\": \"some_pass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

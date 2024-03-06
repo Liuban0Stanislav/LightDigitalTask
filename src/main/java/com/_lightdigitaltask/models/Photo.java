@@ -18,6 +18,7 @@ public class Photo {
     private String mediaType;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] data;
 
     @Override
