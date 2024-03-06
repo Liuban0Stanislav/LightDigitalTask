@@ -7,7 +7,6 @@ import com._lightdigitaltask.mapping.UserMapper;
 import com._lightdigitaltask.models.User;
 import com._lightdigitaltask.repository.UserRepository;
 import com._lightdigitaltask.service.AuthService;
-import com._lightdigitaltask.service.MyUserDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

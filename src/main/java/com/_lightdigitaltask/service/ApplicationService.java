@@ -1,6 +1,7 @@
 package com._lightdigitaltask.service;
 
-import com._lightdigitaltask.DTO.ApplicationDTO;
+import com._lightdigitaltask.DTO.ApplicationInDTO;
+import com._lightdigitaltask.DTO.ApplicationOutDTO;
 import com._lightdigitaltask.models.Application;
 import com._lightdigitaltask.models.Status;
 
@@ -12,7 +13,7 @@ public interface ApplicationService {
      * @param application
      * @return application
      */
-    Application createApplication(Application application);
+    ApplicationOutDTO createApplication(ApplicationInDTO applicationIn);
 
     /**
      * Метод обновляет статус заявки при рассмотуурении ее оператором
@@ -25,5 +26,7 @@ public interface ApplicationService {
      * Посмотреть список заявок
      * @return список заявок
      */
-    List<ApplicationDTO> getAllApplications();
+    List<ApplicationOutDTO> getAllApplications();
+    List<ApplicationOutDTO> getApplicationsByDateDecreaseOrderAccordingToStatus(String stat, int page, int size);
+    List<ApplicationOutDTO> getApplicationsByDateIncreaseOrderAccordingToStatus(String stat, int page, int size);
 }
