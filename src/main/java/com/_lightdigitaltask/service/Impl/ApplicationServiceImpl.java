@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static com._lightdigitaltask.models.Status.DRAFT;
 import static com._lightdigitaltask.servlet.MethodInspector.getCurrentClassName;
 import static com._lightdigitaltask.servlet.MethodInspector.getCurrentMethodName;
 
@@ -35,6 +36,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         this.applicationMapper = applicationMapper;
     }
 
+    /**
+     * Метод создает заявку.
+     * <br>Т.к. в объекте заявки есть поля "телефон юзера" и "имя юзера",
+     * то эти данные в маппере подтягиваются из сущности авторизованного юзера.
+     * То есть именно того, который создает текущую завку.</br>
+     * @param applicationIn {@link ApplicationInDTO}
+     * @return {@link ApplicationOutDTO}
+     */
     @Override
     public ApplicationOutDTO createApplication(ApplicationInDTO applicationIn) {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
@@ -42,31 +51,51 @@ public class ApplicationServiceImpl implements ApplicationService {
         //маппим входящее ДТО в объект заявки
         Application application = applicationMapper.mapApplicationInDtoToApplication(applicationIn);
 
+        //вновь созданная заявка всегда черновик.
+        application.setStatus(DRAFT);
+
         //заявку сохраняем в БД, а вовращаемый результат мапим в "выходное" ДТО
         return applicationMapper.mapApplicationToApplicationOutDTO(applicationRepository.save(application));
     }
 
+    /**
+     * Метод обновляет статус завки.
+     * @param applicationId id заявки
+     * @param newStatus новый статус
+     * @return {@link ApplicationOutDTO}
+     */
     @Override
-    public Application updateStatus(Integer applicationId, Status newStatus) {
+    public ApplicationOutDTO updateStatus(Integer applicationId, Status newStatus) {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
 
-        Application application;
+        Application application = null;
         if (applicationRepository.findById(applicationId).isPresent()) {
-            application = applicationRepository.findById(applicationId).get();
+            application = applicationRepository.findById(applicationId).orElseThrow(
+                    () -> new ApplicationOnDatabaseIsAbsentException("Заявление с таким ID отсутствует в БД.")
+            );
             application.setStatus(newStatus);
-            return applicationRepository.save(application);
-        } else {
-            throw new ApplicationOnDatabaseIsAbsentException("Заявление с таким ID отсутствует в БД.");
         }
+        return applicationMapper.mapApplicationToApplicationOutDTO(applicationRepository.save(application));
     }
 
+    /**
+     * Метод возвращает список всех заявок.
+     * @return список заявок
+     */
     @Override
     public List<ApplicationOutDTO> getAllApplications() {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
         return applicationMapper.mapAllApplicationsToAllApplicationDto(applicationRepository.findAll());
     }
 
-
+    /**
+     * Метод возвращает список заявок с возможностью сортировки по дате от большего к меньшему и пагинацией
+     * по 5 элементов, фильтрация по статусу
+     * @param stat статус заявки
+     * @param page номер страницы
+     * @param size количество записоей на странице
+     * @return {@link ApplicationOutDTO}
+     */
     @Transactional
     public List<ApplicationOutDTO> getApplicationsByDateDecreaseOrderAccordingToStatus(String stat, int page, int size) {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
@@ -80,6 +109,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         );
     }
 
+    /**
+     * Метод возвращает список заявок с возможностью сортировки по дате от меньшего к большему и пагинацией
+     * по 5 элементов, фильтрация по статусу
+     * @param stat статус заявки
+     * @param page номер страницы
+     * @param size количество записоей на странице
+     * @return {@link ApplicationOutDTO}
+     */
     @Transactional
     public List<ApplicationOutDTO> getApplicationsByDateIncreaseOrderAccordingToStatus(String stat, int page, int size) {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
@@ -92,13 +129,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                 applicationRepository.getApplicationsByDateIncreaseOrderAccordingToStatus(mapedStat, page, size)
         );
     }
+
     /**
      * Метод для конвертации статуса заявки из строкового формата в цифровой (принимается в БД).
      *
-     * @param stat
-     * @return int
+     * @param stat статус в строковом формате
+     * @return int статус в числовом формате
      */
     private int mapStatus(String stat) {
+        log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
         int rez;
         switch (stat) {
             case "DRAFT":
@@ -121,5 +160,22 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new RuntimeException("Статус введен не верно, проверьте правильность написания.");
         }
         return rez;
+    }
+
+    /**
+     * Метод возвращает завяку по ее id
+     * @param applicationId id заявки
+     * @return {@link ApplicationOutDTO}
+     */
+    public ApplicationOutDTO getApplication(int applicationId){
+        log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
+
+        Application application = null;
+        if (applicationRepository.findById(applicationId).isPresent()) {
+            application = applicationRepository.findById(applicationId).orElseThrow(
+                    () -> new ApplicationOnDatabaseIsAbsentException("Заявления с таким id нет в базе данных.")
+            );
+        }
+        return applicationMapper.mapApplicationToApplicationOutDTO(application);
     }
 }

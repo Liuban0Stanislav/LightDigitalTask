@@ -36,7 +36,7 @@ public class UserMapper {
                 user.getLastName(),
                 user.getPhone(),
                 user.getRole(),
-                user.getPhoto()
+                user.getPhoto() != null ? "есть аватар" : "нет аватара"
         );
     }
 
@@ -51,20 +51,17 @@ public class UserMapper {
         List<UserDTO> listUserDTO = new ArrayList<>();
 
         for (User user: listUser) {
-            UserDTO userDTO = new UserDTO(
-                    user.getId(),
-                    user.getUserName(),
-                    user.getPassword(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getPhone(),
-                    user.getRole(),
-                    user.getPhoto()
-            );
+            UserDTO userDTO = this.mapUserToUserDTO(user);
             listUserDTO.add(userDTO);
         }
         return listUserDTO;
     }
+
+    /**
+     * {@link RegisterDTO} -> {@link User}
+     * @param register форма регистрации
+     * @return {@link User}
+     */
     public User mapFromRegisterToUser(RegisterDTO register){
         return new User(
                 null,
