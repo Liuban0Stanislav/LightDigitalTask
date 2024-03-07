@@ -5,10 +5,16 @@ import com._lightdigitaltask.models.Role;
 import com._lightdigitaltask.models.User;
 import com._lightdigitaltask.service.Impl.UserServiceImpl;
 import com._lightdigitaltask.servlet.MethodInspector;
+import com._lightdigitaltask.utils.JwtTokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import static com._lightdigitaltask.servlet.MethodInspector.getCurrentClassName;
@@ -26,9 +32,11 @@ import static com._lightdigitaltask.servlet.MethodInspector.getCurrentMethodName
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final JwtTokenUtils jwtTokenUtils;
 
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserServiceImpl userService, JwtTokenUtils jwtTokenUtils) {
         this.userService = userService;
+        this.jwtTokenUtils = jwtTokenUtils;
     }
 
     /**
@@ -36,6 +44,8 @@ public class UserController {
      * @return список юзеров
      */
     @GetMapping
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('OPERATOR')")
+//    @Secured("{ROLE_ADMIN}")
     public List<UserDTO> getAllUsers(){
         log.info("вызван метод мапера "+ getCurrentClassName() + ": " + getCurrentMethodName());
         return userService.getAllUsers();
@@ -67,5 +77,17 @@ public class UserController {
     public UserDTO changeRole(@PathVariable Integer userId,
                               @PathVariable Role newRole){
         return userService.changeRole(userId, newRole);
+    }
+    @GetMapping("/getCurrent")
+    public Principal getCurrentUser(Principal principal, Authentication auth){
+        log.info("Текущий пользователь - {}", principal.getName());
+        log.info("{}", auth.getAuthorities());
+        return principal;
+    }
+
+    @GetMapping("/token")
+    public String getToken (UserDetails userDetails){
+        System.out.println(JwtTokenUtils.generateToken(userDetails));
+        return jwtTokenUtils.generateToken(userDetails);
     }
 }
