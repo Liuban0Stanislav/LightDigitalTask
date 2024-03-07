@@ -1,15 +1,13 @@
 package com._lightdigitaltask.controller;
 
 import com._lightdigitaltask.DTO.UserDTO;
+import com._lightdigitaltask.models.Role;
 import com._lightdigitaltask.models.User;
 import com._lightdigitaltask.service.Impl.UserServiceImpl;
 import com._lightdigitaltask.servlet.MethodInspector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,5 +50,22 @@ public class UserController {
     public UserDTO getUser(@PathVariable Integer userId){
         log.info("вызван метод мапера "+ getCurrentClassName() + ": " + getCurrentMethodName());
         return userService.getUser(userId);
+    }
+
+    /**
+     * Метод для изменения роли {@link Role} поьзователя.
+     * <ul>Роли могут быть следующими:
+     * <li>USER</li>
+     * <li>OPERATOR</li>
+     * <li>ADMIN</li></ul>
+     * Чтобы изменить роль, нужно найти пользователя по его id.
+     * @param userId id пользователя
+     * @param newRole роль пользователя
+     * @return объект {@link UserDTO}
+     */
+    @PatchMapping("/newRole/{userId}/{newRole}")
+    public UserDTO changeRole(@PathVariable Integer userId,
+                              @PathVariable Role newRole){
+        return userService.changeRole(userId, newRole);
     }
 }
