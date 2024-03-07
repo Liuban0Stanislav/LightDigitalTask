@@ -62,6 +62,12 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
+    /**
+     * Метод изменяет роль пользователя.
+     * @param userId iid пользователя
+     * @param newRole новая роль пользователя
+     * @return {@link UserDTO}
+     */
     public UserDTO changeRole(Integer userId, Role newRole){
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
 
