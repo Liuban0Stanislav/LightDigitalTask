@@ -31,7 +31,6 @@ public class UserMapper {
         return new UserDTO(
                 user.getId(),
                 user.getUserName(),
-                user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPhone(),
