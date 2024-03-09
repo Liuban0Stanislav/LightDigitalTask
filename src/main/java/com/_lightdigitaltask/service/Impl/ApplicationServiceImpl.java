@@ -1,14 +1,18 @@
 package com._lightdigitaltask.service.Impl;
 
+import com._lightdigitaltask.DTO.ApplicationDTOproj;
 import com._lightdigitaltask.DTO.ApplicationInDTO;
 import com._lightdigitaltask.DTO.ApplicationOutDTO;
 import com._lightdigitaltask.exceptions.ApplicationOnDatabaseIsAbsentException;
 import com._lightdigitaltask.mapping.ApplicationMapper;
 import com._lightdigitaltask.models.Application;
 import com._lightdigitaltask.models.Status;
+import com._lightdigitaltask.models.User;
 import com._lightdigitaltask.repository.ApplicationRepository;
+import com._lightdigitaltask.repository.UserRepository;
 import com._lightdigitaltask.service.ApplicationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,10 +33,12 @@ import static com._lightdigitaltask.servlet.MethodInspector.getCurrentMethodName
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
     private final ApplicationMapper applicationMapper;
 
-    public ApplicationServiceImpl(ApplicationRepository applicationRepository, ApplicationMapper applicationMapper) {
+    public ApplicationServiceImpl(ApplicationRepository applicationRepository, UserRepository userRepository, ApplicationMapper applicationMapper) {
         this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
         this.applicationMapper = applicationMapper;
     }
 
@@ -89,47 +95,53 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     /**
-     * Метод возвращает список заявок с возможностью сортировки по дате от большего к меньшему и пагинацией
-     * по 5 элементов, фильтрация по статусу
+     * Метод возвращает список заявок с возможностью сортировки по дате и пагинацией
+     * по 5 элементов, фильтрация по статусу.
      * @param stat статус заявки
      * @param page номер страницы
      * @param size количество записоей на странице
      * @return {@link ApplicationOutDTO}
      */
     @Transactional
-    public List<ApplicationOutDTO> getApplicationsByDateDecreaseOrderAccordingToStatus(String stat, int page, int size) {
+    @Override
+    public List<ApplicationOutDTO> getApplicationsByUserFilters(String stat, int page, int size, String sortOrder, Authentication auth) {
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
 
-        //Конвертируем статтус из строкового формата в число для БД
+        //Конвертируем статус из строкового формата в число для БД
         var mapedStat = this.mapStatus(stat);
+
+        //Находим логин текущего пользователя и по логину находим id текущего пользователя
+        var login = auth.getName();
+        int currentUserId = userRepository.findUserByUserName(login).getId();
 
         //Поиск в БД списка заявок с сортировкой по датам в завосимости от их статуса.
         return applicationMapper.mapAllApplicationsToAllApplicationDto(
-                applicationRepository.getApplicationsByDateDecreaseOrderAccordingToStatus(mapedStat, page, size)
+                applicationRepository.getApplicationsByUserFilters(mapedStat, page, size, sortOrder, currentUserId)
         );
     }
 
-    /**
-     * Метод возвращает список заявок с возможностью сортировки по дате от меньшего к большему и пагинацией
-     * по 5 элементов, фильтрация по статусу
-     * @param stat статус заявки
-     * @param page номер страницы
-     * @param size количество записоей на странице
-     * @return {@link ApplicationOutDTO}
-     */
     @Transactional
-    public List<ApplicationOutDTO> getApplicationsByDateIncreaseOrderAccordingToStatus(String stat, int page, int size) {
+    @Override
+    public List<ApplicationDTOproj> getApplicationsByOperatorFirstFilters(int page, String login, String sortOrder){
+        log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
+        List<ApplicationDTOproj> application =
+                applicationRepository.getApplicationsByOperatorFirstFilters(page, login, sortOrder);
+        return application;
+    }
+    @Transactional
+    @Override
+    public List<ApplicationDTOproj> getApplicationsByOperatorSecondFilters(String userName, String sortOrder){
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
 
-        //Конвертируем статтус из строкового формата в число для БД
-        var mapedStat = this.mapStatus(stat);
-
-        //Поиск в БД списка заявок с сортировкой по датам в завосимости от их статуса.
-        return applicationMapper.mapAllApplicationsToAllApplicationDto(
-                applicationRepository.getApplicationsByDateIncreaseOrderAccordingToStatus(mapedStat, page, size)
-        );
+        return applicationRepository.getApplicationsByOperatorSecondFilters(userName, sortOrder);
     }
 
+    @Transactional
+    @Override
+    public List<ApplicationDTOproj> getApplicationsByAdminFilters(int page, String userName){
+        log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
+        return applicationRepository.getApplicationsByAdminFilters(page, userName);
+    }
     /**
      * Метод для конвертации статуса заявки из строкового формата в цифровой (принимается в БД).
      *
@@ -167,7 +179,8 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @param applicationId id заявки
      * @return {@link ApplicationOutDTO}
      */
-    public ApplicationOutDTO getApplication(int applicationId){
+    @Override
+    public ApplicationOutDTO getApplicationById(int applicationId){
         log.info("вызван метод сервиса " + getCurrentClassName() + ": " + getCurrentMethodName());
 
         Application application = null;

@@ -50,6 +50,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Изменить роль пользователя",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/user/newRole/1/USER",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"newRole",
+								"1",
+								"USER"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -59,6 +96,21 @@
 				{
 					"name": "Получить аватар пользователя по его ID",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -119,6 +171,21 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -145,7 +212,7 @@
 					"response": []
 				},
 				{
-					"name": "Посмотреть все заявки сортированные по УБЫВАНИЮ и в зависимости от их статуса",
+					"name": "Для USER - Посмотреть все заявки сортированные по дате и статусу",
 					"event": [
 						{
 							"listen": "test",
@@ -220,7 +287,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/application/pagingBackOrder/DRAFT/0/5",
+							"raw": "http://localhost:8080/application/getUserApplications?stat=DRAFT&page=0&size=5&sortOrder=ASC",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -228,72 +295,32 @@
 							"port": "8080",
 							"path": [
 								"application",
-								"pagingBackOrder",
-								"DRAFT",
-								"0",
-								"5"
+								"getUserApplications"
+							],
+							"query": [
+								{
+									"key": "stat",
+									"value": "DRAFT"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Посмотреть все заявки сортированные по ВОЗРАСТАНИЮ и в зависимости от их статуса",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var template = `\r",
-									"<style type=\"text/css\">\r",
-									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
-									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
-									"    .tftable tr {background-color:#ffffff;}\r",
-									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
-									"    .tftable tr:hover {background-color:#e0ffff;}\r",
-									"</style>\r",
-									"\r",
-									"<table class=\"tftable\" border=\"1\">\r",
-									"    <tr>\r",
-									"        <th>ID</th>\r",
-									"        <th>Status</th>\r",
-									"        <th>Text</th>\r",
-									"        <th>Date</th>\r",
-									"        <th>Phone</th>\r",
-									"        <th>User Name</th>\r",
-									"        <th>User ID</th>\r",
-									"        <th>First Name</th>\r",
-									"        <th>Last Name</th>\r",
-									"        <th>User Role</th>\r",
-									"    </tr>\r",
-									"    \r",
-									"    {{#each response.content}}\r",
-									"        <tr>\r",
-									"            <td>{{id}}</td>\r",
-									"            <td>{{status}}</td>\r",
-									"            <td>{{text}}</td>\r",
-									"            <td>{{date}}</td>\r",
-									"            <td>{{phone}}</td>\r",
-									"            <td>{{userName}}</td>\r",
-									"            <td>{{users.id}}</td>\r",
-									"            <td>{{users.firstName}}</td>\r",
-									"            <td>{{users.lastName}}</td>\r",
-									"            <td>{{users.role}}</td>\r",
-									"        </tr>\r",
-									"    {{/each}}\r",
-									"</table>\r",
-									"`;\r",
-									"\r",
-									"function constructVisualizerPayload() {\r",
-									"    return { response: pm.response.json() }\r",
-									"}\r",
-									"\r",
-									"pm.visualizer.set(template, constructVisualizerPayload());"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
+					"name": "Для OPERATOR запрос 1 с набором фильтров",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -313,7 +340,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/application/pagingIncreaseOrder/DRAFT/0/5",
+							"raw": "http://localhost:8080/application/getOperatorFirstListApplications?page=0&login=Jonnie25&sortOrder=DESC",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -321,10 +348,66 @@
 							"port": "8080",
 							"path": [
 								"application",
-								"pagingIncreaseOrder",
-								"DRAFT",
-								"0",
-								"5"
+								"getOperatorFirstListApplications"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "login",
+									"value": "Jonnie25"
+								},
+								{
+									"key": "sortOrder",
+									"value": "DESC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Для OPERATOR запрос 2 с фильтрами",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "some_pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Jonnie25",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/application/getOperatorSecondListApplications?userName=J&sortOrder=ASC",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"application",
+								"getOperatorSecondListApplications"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "J"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								}
 							]
 						}
 					},
