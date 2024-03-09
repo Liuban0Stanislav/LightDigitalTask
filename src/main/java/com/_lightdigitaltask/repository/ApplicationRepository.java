@@ -20,4 +20,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
 
     @Query(value = "SELECT * FROM (SELECT * FROM application AS a WHERE status = :stat) AS a ORDER BY a.date ASC OFFSET :page ROWS FETCH NEXT :size ROWS ONLY;", nativeQuery = true)
     List<Application> getApplicationsByDateIncreaseOrderAccordingToStatus(int stat, int page, int size);
+
+    @Query(value = "SELECT a.id AS id, a.status AS status, a.text AS text, a.date AS date, a.phone AS phone, a.users_id  AS userId FROM application AS a JOIN users AS u ON a.users_id = u.id WHERE u.first_name LIKE :userName ORDER BY a.date DESC LIMIT 5 OFFSET 0;", nativeQuery = true)
+    List<Application> getApplicationsByOperatorFilters(String userName);
 }
