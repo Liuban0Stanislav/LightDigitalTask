@@ -5,7 +5,6 @@ import com._lightdigitaltask.models.Role;
 import com._lightdigitaltask.models.User;
 import com._lightdigitaltask.service.Impl.UserServiceImpl;
 import com._lightdigitaltask.servlet.MethodInspector;
-import com._lightdigitaltask.utils.JwtTokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -32,11 +31,9 @@ import static com._lightdigitaltask.servlet.MethodInspector.getCurrentMethodName
 public class UserController {
 
     private final UserServiceImpl userService;
-    private final JwtTokenUtils jwtTokenUtils;
 
-    public UserController(UserServiceImpl userService, JwtTokenUtils jwtTokenUtils) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
-        this.jwtTokenUtils = jwtTokenUtils;
     }
 
     /**
@@ -44,8 +41,7 @@ public class UserController {
      * @return список юзеров
      */
     @GetMapping
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('OPERATOR')")
-//    @Secured("{ROLE_ADMIN}")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     public List<UserDTO> getAllUsers(){
         log.info("вызван метод мапера "+ getCurrentClassName() + ": " + getCurrentMethodName());
         return userService.getAllUsers();
@@ -56,6 +52,7 @@ public class UserController {
      * @param userId
      * @return
      */
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @GetMapping("/{userId}")
     public UserDTO getUser(@PathVariable Integer userId){
         log.info("вызван метод мапера "+ getCurrentClassName() + ": " + getCurrentMethodName());
@@ -73,21 +70,10 @@ public class UserController {
      * @param newRole роль пользователя
      * @return объект {@link UserDTO}
      */
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @PatchMapping("/newRole/{userId}/{newRole}")
     public UserDTO changeRole(@PathVariable Integer userId,
                               @PathVariable Role newRole){
         return userService.changeRole(userId, newRole);
-    }
-    @GetMapping("/getCurrent")
-    public Principal getCurrentUser(Principal principal, Authentication auth){
-        log.info("Текущий пользователь - {}", principal.getName());
-        log.info("{}", auth.getAuthorities());
-        return principal;
-    }
-
-    @GetMapping("/token")
-    public String getToken (UserDetails userDetails){
-        System.out.println(JwtTokenUtils.generateToken(userDetails));
-        return jwtTokenUtils.generateToken(userDetails);
     }
 }

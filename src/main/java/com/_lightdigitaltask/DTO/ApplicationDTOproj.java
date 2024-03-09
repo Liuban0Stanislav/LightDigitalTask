@@ -4,11 +4,12 @@ import com._lightdigitaltask.models.Status;
 
 import java.util.Date;
 
-public interface OperatorFiltersDTO {
+public interface ApplicationDTOproj {
     Integer getId();
     Status getStatus();
     String getText();
     Date getDate();
     String getPhone();
-   // Integer getUserId();
+    String getUserName();
+    Integer getUsers();
 }

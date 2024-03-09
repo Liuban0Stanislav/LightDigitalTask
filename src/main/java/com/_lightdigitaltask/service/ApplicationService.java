@@ -1,9 +1,11 @@
 package com._lightdigitaltask.service;
 
+import com._lightdigitaltask.DTO.ApplicationDTOproj;
 import com._lightdigitaltask.DTO.ApplicationInDTO;
 import com._lightdigitaltask.DTO.ApplicationOutDTO;
 import com._lightdigitaltask.models.Application;
 import com._lightdigitaltask.models.Status;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -30,28 +32,22 @@ public interface ApplicationService {
     List<ApplicationOutDTO> getAllApplications();
 
     /**
-     * Метод возвращает список заявок с возможностью сортировки по дате от большего к меньшему и пагинацией
+     * Метод возвращает список заявок с возможностью сортировки по дате и пагинацией
      * по 5 элементов, фильтрация по статусу
      * @param stat статус заявки
      * @param page номер страницы
      * @param size количество записоей на странице
      * @return {@link ApplicationOutDTO}
      */
-    List<ApplicationOutDTO> getApplicationsByDateDecreaseOrderAccordingToStatus(String stat, int page, int size);
-    /**
-     * Метод возвращает список заявок с возможностью сортировки по дате от меньшего к большему и пагинацией
-     * по 5 элементов, фильтрация по статусу
-     * @param stat статус заявки
-     * @param page номер страницы
-     * @param size количество записоей на странице
-     * @return {@link ApplicationOutDTO}
-     */
-    List<ApplicationOutDTO> getApplicationsByDateIncreaseOrderAccordingToStatus(String stat, int page, int size);
+    List<ApplicationOutDTO> getApplicationsByUserFilters(String stat, int page, int size, String sortOrder, Authentication auth);
+    List<ApplicationDTOproj> getApplicationsByOperatorFirstFilters(int page, String login, String sortOrder);
+    List<ApplicationDTOproj> getApplicationsByOperatorSecondFilters(String userName, String sortOrder);
+    List<ApplicationDTOproj> getApplicationsByAdminFilters(int page, String userName);
 
     /**
      * Метод возвращает завяку по ее id
      * @param applicationId id заявки
      * @return {@link ApplicationOutDTO}
      */
-    ApplicationOutDTO getApplication(int applicationId);
+    ApplicationOutDTO getApplicationById(int applicationId);
 }

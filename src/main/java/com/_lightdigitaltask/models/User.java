@@ -27,9 +27,6 @@ public class User {
     @OneToOne
     private Photo photo;
 
-//    @OneToMany(mappedBy = "users")
-//    private Collection<Application> applications;
-
     @Override
     public String toString() {
         return "UserEntity{" +
